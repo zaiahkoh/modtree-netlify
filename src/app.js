@@ -3,7 +3,12 @@ const serverless = require('serverless-http');
 const app = express();
 const router = express.Router();
 
-router.get('/', (req, res) => {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+router.get('/', async (req, res) => {
+  await sleep(2000);
   res.send('hello world');
 });
 
