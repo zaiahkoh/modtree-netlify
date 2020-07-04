@@ -2,17 +2,15 @@ const express = require('express');
 const serverless = require('serverless-http');
 const app = express();
 const router = express.Router();
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const getCol = require('../utils/mongo');
 
 router.get('/', async (req, res) => {
-  await sleep(2000);
+  const col = await getCol('rules');
+  const out = await col.findOne({tag: 'r_de_basic'});
+  console.log(out);
   res.send('hello world');
 });
 
 app.use('/.netlify/functions/app', router);
-
 
 module.exports.handler = serverless(app);
