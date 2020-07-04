@@ -27,6 +27,14 @@ router.get('/faculties/:fac', (req, res) => {
   });
 });
 
+router.get('/residences', (req, res) => {
+  getCollection('residences').then(col => {
+    return col.find().toArray();
+  }).then(output => {
+    res.json(output);
+  });
+});
+
 app.use('/.netlify/functions/info', router);
 
 module.exports.handler = serverless(app);
