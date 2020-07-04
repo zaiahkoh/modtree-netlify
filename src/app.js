@@ -3,6 +3,8 @@ const serverless = require('serverless-http');
 const app = express();
 const router = express.Router();
 const getCol = require('../utils/mongo');
+const cors = require('cors');
+app.use(cors());
 
 router.get('/', async (req, res) => {
   const col = await getCol('rules');

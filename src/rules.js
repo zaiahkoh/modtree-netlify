@@ -3,6 +3,8 @@ const router = express.Router();
 const getCollection = require('../utils/mongo');
 const app = express();
 const serverless = require('serverless-http');
+const cors = require('cors');
+app.use(cors());
 
 //Used to receive a ruleTag that starts with 'r_' and returns the corresponding
 //JS Object from the Mongo Database
