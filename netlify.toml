@@ -1,6 +1,6 @@
 [build]
 functions = "functions"
 [[headers]]
-  for = "/*"
+  for = "/"
     [headers.values]
     Access-Control-Allow-Origin = "*"
