@@ -41,19 +41,19 @@ router.put('/', (req, res) => {
     facIndex,
     majorIndex
   } = req.body;
-  if (modPlan) user.modPlan = modPlan;
-  if (name) user.name = name;
-  if (residential) user.residential = residential;
-  if (major) user.major = major;
-  if (matriculationYear) user.matriculationYear = matriculationYear;
-  if (targetGradYear) user.targetGradYear = targetGradYear;
-  if (transcript) user.transcript = transcript;
-  if (specialisation) user.specialisation = specialisation;
-  if (cap) user.cap = cap;
-  if (targetCap) user.targetCap = targetCap;
-  if (faculty) user.faculty = faculty;
-  if (facIndex) user.facIndex = facIndex;
-  if (majorIndex) user.majorIndex = majorIndex;
+  if (modPlan !== undefined) user.modPlan = modPlan;
+  if (name !== undefined) user.name = name;
+  if (residential !== undefined) user.residential = residential;
+  if (major !== undefined) user.major = major;
+  if (matriculationYear !== undefined) user.matriculationYear = matriculationYear;
+  if (targetGradYear !== undefined) user.targetGradYear = targetGradYear;
+  if (transcript !== undefined) user.transcript = transcript;
+  if (specialisation !== undefined) user.specialisation = specialisation;
+  if (cap !== undefined) user.cap = cap;
+  if (targetCap !== undefined) user.targetCap = targetCap;
+  if (faculty !== undefined) user.faculty = faculty;
+  if (facIndex !== undefined) user.facIndex = facIndex;
+  if (majorIndex !== undefined) user.majorIndex = majorIndex;
   user.save()
   .then(user => {
     res.status(200).json({
