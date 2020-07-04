@@ -1,8 +1,7 @@
 const getMod = require('../api/nusmods').getMod;
-const getDb = require('./mongo').getDb;
 const assert = require('assert');
 const parseMod = require('./parseMod');
-const getCollection = (col) => getDb().collection(col);
+const getCollection = require('./mongo');
 
 //Takes in a list parameter and returns the expanded form where all list
 //references have been resolved
@@ -10,7 +9,8 @@ async function expandList(list) {
 
   //Return an array containing a list of modules, given the filters
   async function queryList(queryObject) {
-    const listObj = await getCollection('lists').findOne({tag: queryObject.tag});
+    const col = await getCollection('lists');
+    const listObj = await col.findOne({tag: queryObject.tag});
     assert(listObj, `unrecognised list tag: ${queryObject.tag}`)
     var filterList = listObj.list;
 
@@ -71,7 +71,8 @@ async function expandList(list) {
 async function getRule(ruleTag) {
   const path = ruleTag.split('/');
   const root = path.shift();
-  const rootObj = await getCollection('rules').findOne({tag: root});
+  const col = await getCollection('rules')
+  const rootObj = await col.findOne({tag: root});
 
   //Navigate the root Rule Object until it reaches the inner rule Object
   function recurse (obj, path) {
@@ -280,10 +281,10 @@ async function nModules (ruleObj) {
   return (modPlan) => modPlan.modules.length >= params.n;
 }
 
-async function eval(ruleTag, modPlan) {
+async function evaluate(ruleTag, modPlan) {
   const func = await compile(ruleTag);
   const res = await func(modPlan);
   return res;
 }
 
-module.exports = eval;
+module.exports = evaluate;

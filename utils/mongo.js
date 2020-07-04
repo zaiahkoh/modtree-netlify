@@ -1,19 +1,14 @@
 const MongoClient = require( 'mongodb' ).MongoClient;
-const url = require('../config/keys').mongoURI;
+const uri = 'mongodb+srv://zaiah:modtree@cluster0-scnbi.gcp.mongodb.net/modtree?retryWrites=true&w=majority'
 
-var _db;
+var cachedDb = null;
 
-module.exports = {
-
-  connectToServer: function( callback ) {
-    MongoClient.connect( url,  { useNewUrlParser: true, useUnifiedTopology: true }, function( err, client ) {
-      _db  = client.db('modtree');
-      return callback( err );
-    } );
-  },
-
-  getDb: function() {
-    return _db;
+module.exports = async (colName) => {
+  if (!cachedDb) {
+    const client = await MongoClient.connect(
+      uri, {useNewUrlParser: true, useUnifiedTopology: true});
+    const db = await client.db('modtree');
+    cachedDb = db;
   }
-
-};
+  return cachedDb.collection(colName);
+}
