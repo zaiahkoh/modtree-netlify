@@ -53,7 +53,7 @@ async function expandList(list) {
   var output = [];
   for(i = 0; i < list.length; i++) {
     const item = list[i];
-    if (typeof item == 'object' && item.tag.startsWith('l_')) {
+    if (typeof item == 'object' && item.tag && item.tag.startsWith('l_')) {
       var spread = await queryList(item);
       spread = spread.map(code => '?' + code);
       output.push(...spread);
@@ -73,6 +73,7 @@ async function getRule(ruleTag) {
   const root = path.shift();
   const col = await getCollection('rules')
   const rootObj = await col.findOne({tag: root});
+  if (!rootObj) {console.log(`ruleNotFound: ${ruleTag}`)}
 
   //Navigate the root Rule Object until it reaches the inner rule Object
   function recurse (obj, path) {
@@ -256,8 +257,13 @@ async function filter(ruleObj) {
       modList = modList.filter(mod => checkFor(mod, 'level', allowed));
     }
 
-    if (params.except !== undefined) {
-      const allowed = params.except;
+    if (params.block !== undefined) {
+      const blocked = params.block;
+      modList = modList.filter(mod => !blocked.includes(mod));
+    }
+
+    if (params.allow !== undefined) {
+      const allowed = params.allow;
       const exception = modPlan.modules.filter(mod => allowed.includes(mod));
       modList = modList.concat(exception);
     }
