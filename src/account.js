@@ -1,12 +1,16 @@
 const express = require('express');
-const serverless = require('serverless-http');
 const app = express();
 const router = express.Router();
+const serverless = require('serverless-http');
+const cors = require('cors');
+app.use(cors());
+module.exports.handler = serverless(app);
+
+
 const passport = require("passport");
 const User = require('../models/User');
 const mongoose = require('mongoose')
-const cors = require('cors');
-app.use(cors());
+
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -96,4 +100,3 @@ router.delete('/', (req, res) => {
 
 app.use('/.netlify/functions/account', passport.authenticate('jwt', {session: false}), router);
 
-module.exports.handler = serverless(app);

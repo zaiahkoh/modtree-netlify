@@ -22,8 +22,8 @@ router.post('/', (req, res) => {
   .then(bool => res.send(bool));
 });
 
-router.get('/test', (req, res) => {
-  evaluate('r_ulr', {modules: ['GEH1045', 'GES1024']})
+router.get('/test/:tag', (req, res) => {
+  evaluate(req.params.tag, {modules: ['GEH1045', 'GES1024']})
   .then(bool => res.send(JSON.stringify(bool)));
 });
 

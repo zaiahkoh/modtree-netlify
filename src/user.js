@@ -1,23 +1,32 @@
+// Import Netlify server dependencies and export as a serverless function
 const express = require("express");
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const User = require('../models/User');
+const app = express();
+const router = express.Router();
+const cors = require('cors');
 const serverless = require('serverless-http');
+app.use(cors());
+app.use('/.netlify/functions/user', router);
+module.exports.handler = serverless(app);
+
+// Import other dependencies and middleware
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const User = require('../models/User');
 const validateRegisterInput = require('../utils/register');
 const validateLoginInput = require("../utils/login");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
-const app = express();
-const router = express.Router();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-const cors = require('cors');
-app.use(cors());
 
+// Initialise and use middleware
 mongoose.connect(
   'mongodb+srv://zaiah:modtree@cluster0-scnbi.gcp.mongodb.net/modtree?retryWrites=true&w=majority', 
   { useNewUrlParser: true, useUnifiedTopology: true });
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Helper functions
 
 function createJWT (user, callback) {
   const payload = {
@@ -37,6 +46,7 @@ function createJWT (user, callback) {
   );
 }
 
+// Route declarations
 router.get('/', async (req, res) => {
   User.findOne({email: "test@test.com"})
   .then(
@@ -113,6 +123,5 @@ router.post("/login", (req, res) => {
   });
 });
 
-app.use('/.netlify/functions/user', router);
 
-module.exports.handler = serverless(app);
+
