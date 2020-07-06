@@ -1,15 +1,19 @@
+// Import Netlify server dependencies and declare 'app' and 'router'
 const express = require('express');
-const serverless = require('serverless-http');
 const app = express();
 const router = express.Router();
+const serverless = require('serverless-http');
+const cors = require('cors');
+// Import other dependencies and middleware
 const evaluate = require('../utils/eval');
 const bodyParser = require('body-parser');
-const cors = require('cors');
-app.use(cors());
 
+// Initialise and use middleware
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Route declarations
 router.get('/', (req, res) => {
   res.send('Pong from the eval router');
 });
@@ -37,6 +41,6 @@ router.get('/test3', (req, res) => {
   .then(bool => res.send(JSON.stringify(bool)));
 });
 
+//Set up app to use router and export as a Netlify lambda function
 app.use('/.netlify/functions/eval', router);
-
 module.exports.handler = serverless(app);

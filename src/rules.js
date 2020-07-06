@@ -1,9 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const getCollection = require('../utils/mongo');
+// Import Netlify server dependencies and declare 'app' and 'router'
+const express = require("express");
 const app = express();
-const serverless = require('serverless-http');
+const router = express.Router();
 const cors = require('cors');
+const serverless = require('serverless-http');
+// Import other dependencies and middleware
+const getCollection = require('../utils/mongo');
+
+// Initialise and use middleware
 app.use(cors());
 
 //Used to receive a ruleTag that starts with 'r_' and returns the corresponding
@@ -29,6 +33,6 @@ router.get('/', (req, res) => {
   res.send('from the rules router');
 });
 
+//Set up app to use router and export as a Netlify lambda function
 app.use('/.netlify/functions/rules', router);
-
 module.exports.handler = serverless(app);

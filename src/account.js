@@ -1,27 +1,26 @@
+// Import Netlify server dependencies and declare 'app' and 'router'
 const express = require('express');
 const app = express();
 const router = express.Router();
 const serverless = require('serverless-http');
 const cors = require('cors');
-app.use(cors());
-module.exports.handler = serverless(app);
-
-
+// Import other dependencies and middleware
 const passport = require("passport");
 const User = require('../models/User');
-const mongoose = require('mongoose')
-
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(passport.initialize());
-require('../config/passport')(passport);
-
+// Initialise and use middleware
 mongoose.connect(
   'mongodb+srv://zaiah:modtree@cluster0-scnbi.gcp.mongodb.net/modtree?retryWrites=true&w=majority', 
   { useNewUrlParser: true, useUnifiedTopology: true });
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+require('../config/passport')(passport);
 
+// Route declarations
 router.get('/', (req, res) => {
   var user = req.user;
   user.password = undefined;
@@ -98,5 +97,8 @@ router.delete('/', (req, res) => {
   });
 });
 
-app.use('/.netlify/functions/account', passport.authenticate('jwt', {session: false}), router);
-
+//Set up app to use router and export as a Netlify lambda function
+app.use(
+  '/.netlify/functions/account', 
+  passport.authenticate('jwt', {session: false}), router);
+module.exports.handler = serverless(app);

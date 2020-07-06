@@ -1,13 +1,9 @@
-// Import Netlify server dependencies and export as a serverless function
+// Import Netlify server dependencies and declare 'app' and 'router'
 const express = require("express");
 const app = express();
 const router = express.Router();
 const cors = require('cors');
 const serverless = require('serverless-http');
-app.use(cors());
-app.use('/.netlify/functions/user', router);
-module.exports.handler = serverless(app);
-
 // Import other dependencies and middleware
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -23,11 +19,11 @@ mongoose.connect(
   'mongodb+srv://zaiah:modtree@cluster0-scnbi.gcp.mongodb.net/modtree?retryWrites=true&w=majority', 
   { useNewUrlParser: true, useUnifiedTopology: true });
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Helper functions
-
+// Declare helper functions
 function createJWT (user, callback) {
   const payload = {
     id: user.id,
@@ -47,16 +43,12 @@ function createJWT (user, callback) {
 }
 
 // Route declarations
-router.get('/', async (req, res) => {
-  User.findOne({email: "test@test.com"})
-  .then(
-    console.log
-  )
-  res.send('hello user');
+router.get('/ping', async (req, res) => {
+  res.status(200).send('pong from the /user function');
 });
 
 router.post('/register', (req, res) => {
-  //Form validation
+  // Form validation
   const {errors, isValid} = validateRegisterInput(req.body);
 
   if (!isValid) {
@@ -123,5 +115,6 @@ router.post("/login", (req, res) => {
   });
 });
 
-
-
+//Set up app to use router and export as a Netlify lambda function
+app.use('/.netlify/functions/user', router);
+module.exports.handler = serverless(app);

@@ -1,13 +1,18 @@
-const express = require('express');
-const serverless = require('serverless-http');
+// Import Netlify server dependencies and declare 'app' and 'router'
+const express = require("express");
 const app = express();
 const router = express.Router();
-const getCollection = require('../utils/mongo');
 const cors = require('cors');
+const serverless = require('serverless-http');
+// Import other dependencies and middleware
+const getCollection = require('../utils/mongo');
+
+// Initialise and use middleware
 app.use(cors());
 
-router.get('/', (req, res) => {
-  res.send('Info route up and running');
+// Route declarations
+router.get('/ping', (req, res) => {
+  res.send('pong from the /info function');
 })
 
 router.get('/faculties', (req, res) => {
@@ -35,6 +40,6 @@ router.get('/residences', (req, res) => {
   });
 });
 
+//Set up app to use router and export as a Netlify lambda function
 app.use('/.netlify/functions/info', router);
-
 module.exports.handler = serverless(app);
