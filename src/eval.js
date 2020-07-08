@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
 });
 
 router.get('/test/:tag', (req, res) => {
-  evaluate(req.params.tag, {modules: ['GEH1045', 'GES1024']})
+  evaluate(req.params.tag, {modules: ['GEH1045', 'GES1024', 'UTC1116', 'UTW1001A', 'UTW2001R']})
   .then(bool => res.send(JSON.stringify(bool)));
 });
 

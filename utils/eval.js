@@ -2,6 +2,7 @@ const getMod = require('../api/nusmods').getMod;
 const assert = require('assert');
 const parseMod = require('./parseMod');
 const getCollection = require('./mongo');
+const filterMods = require('./filterMods');
 
 //Takes in a list parameter and returns the expanded form where all list
 //references have been resolved
@@ -208,12 +209,37 @@ function mcs(ruleObj) {
     ? params.n
     : parseInt(params.n);
   return async (modPlan) => {
-    const modList = modPlan.modules;
+    var modList = modPlan.modules;
+    if (params.filter !== undefined) {
+      if (Array.isArray(params.filter)) {
+        modList = filterMods(modList, ...params.filter);
+      } else if (typeof params.filter == 'object') {
+        modList = filterMods(modList, params.filter);
+      }
+    }
     const promiseArr = modList.map(code => getMod(2018, code));
     const creditArr = await Promise.all(promiseArr);
     const total = creditArr.map(item => parseInt(item.moduleCredit)).reduce((a, b) => a + b, 0);
     const output = total >= mcLimit;
     return output;
+  }
+}
+
+//Checks if the modPlan contains at least n number of modules
+async function nModules (ruleObj) {
+  var params = ruleObj.params;
+  assert(params['n'] !== undefined);
+
+  return (modPlan) => {
+    var filteredModules = modPlan.modules;
+    if (params.filter !== undefined) {
+      if (Array.isArray(params.filter)) {
+        filteredModules = filterMods(filteredModules, ...params.filter);
+      } else if (typeof params.filter == 'object') {
+        filteredModules = filterMods(filteredModules, params.filter);
+      }
+    }
+    return filteredModules.length >= params.n;
   }
 }
 
@@ -257,6 +283,13 @@ async function filter(ruleObj) {
       modList = modList.filter(mod => checkFor(mod, 'level', allowed));
     }
 
+    if (params.type !== undefined) {
+      const allowed = (typeof params.type === 'object'
+        ? params.type
+        : [params.type]).map(item => item.toString());
+      modList = modList.filter(mod => checkFor(mod, 'type', allowed));
+    }
+
     if (params.block !== undefined) {
       const blocked = params.block;
       modList = modList.filter(mod => !blocked.includes(mod));
@@ -271,20 +304,12 @@ async function filter(ruleObj) {
     deepCopy.modules = modList;
     return await nextFunc(deepCopy);
   }
-  
 }
 
 //Checks if the modPlan is not empty
 async function notEmpty (ruleObj) {
   var params = ruleObj.params;
   return (modPlan) => (modPlan.modules.length !== 0);
-}
-
-//Checks if the modPlan contains at least n number of modules
-async function nModules (ruleObj) {
-  var params = ruleObj.params;
-  assert(params['n'] !== undefined);
-  return (modPlan) => modPlan.modules.length >= params.n;
 }
 
 async function evaluate(ruleTag, modPlan) {

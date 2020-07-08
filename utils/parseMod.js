@@ -27,10 +27,12 @@ module.exports = function parseMod (moduleCode) {
   }
 
   return {
+    moduleCode: prefix + number + suffix,
     prefix: prefix, 
     number: number, 
     suffix: suffix, 
     no_suffix: prefix + number,
-    level: number.charAt(0)
+    level: number.charAt(0),
+    type: number.charAt(1)
   };
 }
