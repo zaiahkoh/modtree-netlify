@@ -2,8 +2,8 @@
 const express = require("express");
 const app = express();
 const router = express.Router();
-const cors = require('cors');
 const serverless = require('serverless-http');
+const cors = require('cors');
 // Import other dependencies and middleware
 const getCollection = require('../utils/mongo');
 
