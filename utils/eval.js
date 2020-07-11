@@ -185,19 +185,26 @@ async function or(ruleObj) {
   }
 }
 
-//Returns true if n of the sub functions return true
+//Returns true if at least n of the sub functions return true, and less than or
+//equal to max of the sub functions return true
 async function nTrue(ruleObj) {
   var params = ruleObj.params;
   assert(params['list'] !== undefined);
-  assert(params['n'] !== undefined);
+  assert(params['n'] !== undefined || params['max'] !== undefined);
   const n = typeof params.n == 'string'
     ? parseInt(params.n)
     : params.n
+  if (params.max) {
+    const max = typeof params.max == 'string'
+    ? parseInt(params.max)
+    : params.max
+  }
   const expandedList = await expandList(params.list)
   var funcArray = await Promise.all(expandedList.map(compile));
   return async (modPlan) => {
     var boolArray = await Promise.all(funcArray.map(func => func(modPlan)));
-    return boolArray.reduce((a, b) => a + b, 0) >= n;
+    const numOfMods = boolArray.reduce((a, b) => a + b, 0)
+    return  numOfMods >= n;
   }
 }
 

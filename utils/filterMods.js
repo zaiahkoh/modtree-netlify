@@ -1,6 +1,9 @@
 const parseMod = require('./parseMod');
 const assert = require('assert');
 
+/*Accepts an array of module codes and multiple query objects. If different
+query objects return different lists, the lists will be recombined to form
+*/
 function filterMods (modules, ...queries) {
 
   //Helper function to filter by attribute
@@ -15,16 +18,16 @@ function filterMods (modules, ...queries) {
     let modList = array;
 
     if (params.prefix !== undefined) {
-      const allowed = typeof params.prefix === 'string'
-        ? [params.prefix]
-        : params.prefix;
+      const allowed = Array.isArray(params.prefix)
+      ? params.prefix
+      : [params.prefix];
       modList = modList.filter(mod => checkFor(mod, 'prefix', allowed));
     }
   
     if (params.notPrefix !== undefined) {
-      const allowed = typeof params.notPrefix === 'string'
-        ? [params.notPrefix]
-        : params.notPrefix;
+      const allowed = Array.isArray(params.notPrefix)
+        ? params.notPrefix
+        : [params.notPrefix];
       modList = modList.filter(mod => !checkFor(mod, 'prefix', allowed));
     }
   
