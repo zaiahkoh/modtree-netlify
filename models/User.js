@@ -56,6 +56,17 @@ const UserSchema = new Schema({
   }, 
   majorIndex: {
     type: Number
+  },
+  bachelor: {
+    type: String
+  },
+  secondMajors: {
+    type: Array,
+    default: []
+  },
+  minors: {
+    type: Array,
+    default: []
   }
 });
 

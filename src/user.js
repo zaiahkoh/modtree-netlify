@@ -15,6 +15,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/keys");
 const passport = require('passport');
+const directoryRouter = require('../routers/directoryRouter');
 
 // Initialise and use middleware
 mongoose.connect(
@@ -195,9 +196,14 @@ accountRouter.delete('/', (req, res) => {
   });
 });
 
-//Set up app to use router and export as a Netlify lambda function
+//Set up app to use routers and export as a Netlify lambda function
 app.use('/.netlify/functions/user', router);
 app.use(
   '/.netlify/functions/user/account', 
   passport.authenticate('jwt', {session: false}), accountRouter);
+
+app.use(
+  '/.netlify/functions/user/directory', 
+  passport.authenticate('jwt', {session: false}), directoryRouter);
+  
 module.exports.handler = serverless(app);
