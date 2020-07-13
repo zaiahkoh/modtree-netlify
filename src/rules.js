@@ -6,6 +6,7 @@ const serverless = require('serverless-http');
 const cors = require('cors');
 // Import other dependencies and middleware
 const getCollection = require('../utils/mongo');
+const assemble = require('../utils/assemble');
 
 // Initialise and use middleware
 app.use(cors());
@@ -28,6 +29,11 @@ router.get('/:tag', (req, res) => {
   expandRule(req.params.tag)
   .then(obs => res.send(JSON.stringify(obs)));
 });
+
+router.get('/assemble/:tag', (req, res) => {
+  assemble(req.params.tag)
+  .then(obs => res.send(JSON.stringify(obs)));
+})
 
 router.get('/', (req, res) => {
   res.send('from the rules router');
