@@ -9,7 +9,7 @@ async function receiveUser (user) {
 
   //Residence requirements
   const residences = await getCollection('residences')
-  const resi = await residences.findOne({tag: 'residence_tembusu'});
+  const resi = await residences.findOne({tag: user.residential.tag});
   if (resi) {
     if (Array.isArray(resi.rule)){
       ruleList.push(...resi.rule);
@@ -22,8 +22,7 @@ async function receiveUser (user) {
 
   //Bachelor requirements
   const bachelors = await getCollection('bachelors');
-  const bach = await bachelors.findOne({tag: user.bachelor});
-  console.log(user.bachelor);
+  const bach = await bachelors.findOne({tag: user.major.tag});
   if (bach) {
     if (Array.isArray(bach.rule)){
       ruleList.push(...bach.rule);
@@ -41,7 +40,7 @@ async function receiveUser (user) {
     const secondMajors = await getCollection('secondMajors');
     const majRuleArray = [];
     for (i = 0; i < user.secondMajors.length; i++) {
-      const maj = await secondMajors.findOne({tag: user.secondMajors[i]});
+      const maj = await secondMajors.findOne({tag: user.secondMajors[i].tag});
       if (Array.isArray(maj.rule)) {
         majRuleArray.push(...maj.rule)
       } else {
@@ -58,7 +57,7 @@ async function receiveUser (user) {
     const minors = await getCollection('minors');
     const minRuleArray = [];
     for (i = 0; i < user.minors.length; i++) {
-      const min = await minors.findOne({tag: user.minors[i]});
+      const min = await minors.findOne({tag: user.minors[i].tag});
       if (Array.isArray(min.rule)) {
         minRuleArray.push(...min.rule)
       } else {

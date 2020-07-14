@@ -19,15 +19,6 @@ const UserSchema = new Schema({
   password: {
     type: String
   },
-  residential: {
-    type: String
-  },
-  faculty: {
-    type: String
-  },
-  major: {
-    type: String
-  }, 
   matriculationYear: {
     type: String
   },
@@ -51,14 +42,11 @@ const UserSchema = new Schema({
   targetCap: {
     type: Number
   },
-  facIndex: {
-    type: Number
-  }, 
-  majorIndex: {
-    type: Number
+  residential: {
+    type: Object
   },
-  bachelor: {
-    type: String
+  major: {
+    type: Object,
   },
   secondMajors: {
     type: Array,
