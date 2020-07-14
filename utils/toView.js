@@ -108,9 +108,6 @@ async function assemble(ruleTag) {
   var ruleObj;
   if (typeof ruleTag == 'string' && ruleTag.startsWith('r_')) {
     ruleObj = await getRule(ruleTag);
-    if (ruleObj == undefined) {
-      return undefined;
-    }
   } else if (typeof ruleTag == 'object'){
     ruleObj = ruleTag;
   } else {
@@ -131,6 +128,4 @@ async function assemble(ruleTag) {
   }
 }
 
-//assemble('r_ba_degree').then(res => console.log(util.inspect(res, {showHidden: false, depth: null})));
-
-module.exports = assemble;
+assemble('r_ba_degree').then(res => console.log(util.inspect(res, {showHidden: false, depth: null})));
