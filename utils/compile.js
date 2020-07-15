@@ -1,9 +1,9 @@
-const getMod = require('../api/nusmods').getMod;
+const getMod = require('./nusmods').getMod;
 const assert = require('assert');
 const parseMod = require('./parseMod');
 const filterMods = require('./filterMods');
 
-function evaluate(ruleTag) {
+function compile(ruleTag) {
   if (typeof ruleTag == 'object') { 
     ruleObj = ruleTag;
     if (ruleObj.func === 'planned') {
@@ -49,7 +49,7 @@ async function and(ruleObj) {
   var params = ruleObj.params;
   assert(params['list'] !== undefined, '"and" list not provided');
   const expandedList = params.list;
-  var funcArray = await Promise.all(expandedList.map(evaluate));
+  var funcArray = await Promise.all(expandedList.map(compile));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
@@ -64,7 +64,7 @@ async function or(ruleObj) {
   var params = ruleObj.params
   assert(params['list'] !== undefined);
   const expandedList = params.list;
-  var funcArray = await Promise.all(expandedList.map(evaluate));
+  var funcArray = await Promise.all(expandedList.map(compile));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
@@ -89,7 +89,7 @@ async function nTrue(ruleObj) {
     : params.max
   }
   const expandedList = await params.list
-  var funcArray = await Promise.all(expandedList.map(evaluate));
+  var funcArray = await Promise.all(expandedList.map(compile));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
@@ -170,7 +170,7 @@ async function filter(ruleObj) {
   }
 
   assert(params.next !== undefined);
-  var nextFunc = await evaluate(params.next);
+  var nextFunc = await compile(params.next);
 
   return async modPlan => {
     var modList = modPlan.modules;
@@ -220,4 +220,10 @@ async function filter(ruleObj) {
   }
 }
 
-module.exports = evaluate;
+const assemble = require('./assemble')
+assemble('r_ba_degree')
+.then(compile)
+.then(fun => fun({modules: ['CS1101S']}))
+.then(console.log);
+
+module.exports = compile;

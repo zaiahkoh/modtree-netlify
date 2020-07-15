@@ -1,4 +1,4 @@
-const getMod = require('../api/nusmods').getMod;
+const getMod = require('./nusmods').getMod;
 const parseMod = require('./parseMod');
 const getCollection = require('./mongo');
 const filterMods = require('./filterMods');
