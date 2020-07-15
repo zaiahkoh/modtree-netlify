@@ -54,8 +54,9 @@ async function and(ruleObj) {
   const expandedList = params.list;
   var funcArray = await Promise.all(expandedList.map(compile));
   return async (modPlan) => {
-    var boolArray = await Promise.all(funcArray.map(func => func(modPlan).evaluation));
-    const bool = boolArray.every(bool => bool);
+    var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
+    const boolArray = objArray.map(obj => obj.evaluation);
+    const bool = boolArray.every(obj => obj.evaluation);
     ruleObj.evaluation = bool;
     return ruleObj;
   }
@@ -68,7 +69,8 @@ async function or(ruleObj) {
   const expandedList = params.list;
   var funcArray = await Promise.all(expandedList.map(compile));
   return async (modPlan) => {
-    var boolArray = await Promise.all(funcArray.map(func => func(modPlan).evaluation));
+    var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
+    const boolArray = objArray.map(obj => obj.evaluation);
     const bool = boolArray.includes(true);
     ruleObj.evaluation = bool;
     return ruleObj;
@@ -92,10 +94,12 @@ async function nTrue(ruleObj) {
   const expandedList = await params.list
   var funcArray = await Promise.all(expandedList.map(compile));
   return async (modPlan) => {
-    var boolArray = await Promise.all(funcArray.map(func => func(modPlan).evaluation));
+    var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
+    const boolArray = objArray.map(obj => obj.evaluation);
     const numOfMods = boolArray.reduce((a, b) => a + b, 0)
     const bool = numOfMods >= n;
     ruleObj.evaluation = bool;
+    if(ruleObj.tag == 'r_ba_degree') {console.log('asdf')}
     return ruleObj;
   }
 }
@@ -121,6 +125,7 @@ async function mcs(ruleObj) {
     const total = creditArr.map(item => parseInt(item.moduleCredit)).reduce((a, b) => a + b, 0);
     const bool = total >= mcLimit;
     ruleObj.evaluation = bool;
+    console.log('yeet')
     return ruleObj;
   }
 }
@@ -214,14 +219,15 @@ async function filter(ruleObj) {
     }
     var deepCopy = JSON.parse(JSON.stringify(modPlan));
     deepCopy.modules = modList;
-    const bool = await nextFunc(deepCopy).evaluation;
+    const nextObj = await nextFunc(deepCopy);
+    const bool = nextObj.evaluation;
     ruleObj.evaluation = bool;
     return ruleObj;
   }
 }
 
-assemble('r_ba_degree')
+assemble('r_test')
 .then(compile)
 .then(func => func({modules: ['MA1521']}))
-//.then(res => console.log(util.inspect(res, {showHidden: false, depth: null})));
-.then(console.log);
+.then(res => console.log(util.inspect(res, {showHidden: false, depth: null})));
+//.then(console.log);
