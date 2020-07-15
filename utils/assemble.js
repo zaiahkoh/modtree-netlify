@@ -1,8 +1,5 @@
-const getMod = require('../api/nusmods').getMod;
 const parseMod = require('./parseMod');
 const getCollection = require('./mongo');
-const filterMods = require('./filterMods');
-const util = require('util')
 const assert = require('assert')
 
 //Takes in a list parameter and returns the expanded form where all list
@@ -135,7 +132,5 @@ async function assemble(ruleTag) {
     return ruleObj;
   }
 }
-
-//assemble('r_ba_degree').then(res => console.log(util.inspect(res, {showHidden: false, depth: null})));
 
 module.exports = assemble;

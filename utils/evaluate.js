@@ -1,12 +1,9 @@
 const getMod = require('../api/nusmods').getMod;
 const assert = require('assert');
 const parseMod = require('./parseMod');
-const getCollection = require('./mongo');
 const filterMods = require('./filterMods');
-const assemble = require('./assemble');
-const util = require('util');
 
-function compile(ruleTag) {
+function evaluate(ruleTag) {
   if (typeof ruleTag == 'object') { 
     ruleObj = ruleTag;
     if (ruleObj.func === 'planned') {
@@ -52,7 +49,7 @@ async function and(ruleObj) {
   var params = ruleObj.params;
   assert(params['list'] !== undefined, '"and" list not provided');
   const expandedList = params.list;
-  var funcArray = await Promise.all(expandedList.map(compile));
+  var funcArray = await Promise.all(expandedList.map(evaluate));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
@@ -67,7 +64,7 @@ async function or(ruleObj) {
   var params = ruleObj.params
   assert(params['list'] !== undefined);
   const expandedList = params.list;
-  var funcArray = await Promise.all(expandedList.map(compile));
+  var funcArray = await Promise.all(expandedList.map(evaluate));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
@@ -92,7 +89,7 @@ async function nTrue(ruleObj) {
     : params.max
   }
   const expandedList = await params.list
-  var funcArray = await Promise.all(expandedList.map(compile));
+  var funcArray = await Promise.all(expandedList.map(evaluate));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
@@ -175,7 +172,7 @@ async function filter(ruleObj) {
   }
 
   assert(params.next !== undefined);
-  var nextFunc = await compile(params.next);
+  var nextFunc = await evaluate(params.next);
 
   return async modPlan => {
     //console.log(modPlan);
@@ -226,8 +223,4 @@ async function filter(ruleObj) {
   }
 }
 
-assemble('r_test')
-.then(compile)
-.then(func => func({modules: ['MA1521']}))
-.then(res => console.log(util.inspect(res, {showHidden: false, depth: null})));
-//.then(console.log);
+module.exports = evaluate;
