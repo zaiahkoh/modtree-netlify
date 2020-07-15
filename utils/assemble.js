@@ -119,7 +119,6 @@ async function assemble(ruleTag) {
     }
   }
   
-  //console.log(ruleObj);
   if (['mcs', 'nModules', 'notEmpty'].includes(ruleObj.func)) {
     return ruleObj;
   } else if (['and', 'or', 'nTrue'].includes(ruleObj.func)) {

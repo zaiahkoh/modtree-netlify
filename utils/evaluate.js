@@ -96,7 +96,6 @@ async function nTrue(ruleObj) {
     const numOfMods = boolArray.reduce((a, b) => a + b, 0)
     const bool = numOfMods >= n;
     ruleObj.evaluation = bool;
-    if(ruleObj.tag == 'r_ba_degree') {console.log('asdf')}
     return ruleObj;
   }
 }
@@ -122,7 +121,6 @@ async function mcs(ruleObj) {
     const total = creditArr.map(item => parseInt(item.moduleCredit)).reduce((a, b) => a + b, 0);
     const bool = total >= mcLimit;
     ruleObj.evaluation = bool;
-    console.log('yeet')
     return ruleObj;
   }
 }
@@ -175,7 +173,6 @@ async function filter(ruleObj) {
   var nextFunc = await evaluate(params.next);
 
   return async modPlan => {
-    //console.log(modPlan);
     var modList = modPlan.modules;
 
     if (params.modules !== undefined) {
