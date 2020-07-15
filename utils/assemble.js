@@ -113,8 +113,13 @@ async function assemble(ruleTag) {
     }
   } else if (typeof ruleTag == 'object'){
     ruleObj = ruleTag;
-  } else {
-    return ruleTag;
+  } else if (typeof ruleTag == 'string' && ruleTag.startsWith('?')) {
+    return {
+      func: 'planned',
+      params: {
+        moduleCode: ruleTag.substr(1)
+      }
+    }
   }
   
   //console.log(ruleObj);
