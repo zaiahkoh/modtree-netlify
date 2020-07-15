@@ -220,10 +220,4 @@ async function filter(ruleObj) {
   }
 }
 
-const assemble = require('./assemble')
-assemble('r_ba_degree')
-.then(compile)
-.then(fun => fun({modules: ['CS1101S']}))
-.then(console.log);
-
 module.exports = compile;
