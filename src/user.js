@@ -128,6 +128,7 @@ accountRouter.get('/', (req, res) => {
 
 accountRouter.put('/', (req, res) => {
   var user = req.user;
+  console.log(req.user);
   const {
     modPlan, 
     name, 
@@ -140,8 +141,8 @@ accountRouter.put('/', (req, res) => {
     cap,
     targetCap,
     faculty,
-    facIndex,
-    majorIndex
+    secondMajors,
+    minors
   } = req.body;
   if (modPlan !== undefined) user.modPlan = modPlan;
   if (name !== undefined) user.name = name;
@@ -154,8 +155,8 @@ accountRouter.put('/', (req, res) => {
   if (cap !== undefined) user.cap = cap;
   if (targetCap !== undefined) user.targetCap = targetCap;
   if (faculty !== undefined) user.faculty = faculty;
-  if (facIndex !== undefined) user.facIndex = facIndex;
-  if (majorIndex !== undefined) user.majorIndex = majorIndex;
+  if (secondMajors !== undefined) user.secondMajors = secondMajors;
+  if (minors !== undefined) user.minors = minors;
   user.save()
   .then(user => {
     res.status(200).json({
@@ -172,8 +173,8 @@ accountRouter.put('/', (req, res) => {
         cap: cap,
         targetCap: targetCap,
         faculty: faculty,
-        facIndex: facIndex,
-        majorIndex: majorIndex
+        secondMajors: secondMajors,
+        minors: minors
       }
     });
   })
