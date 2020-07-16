@@ -128,7 +128,7 @@ accountRouter.get('/', (req, res) => {
 
 accountRouter.put('/', (req, res) => {
   var user = req.user;
-  console.log(req.user);
+  console.log(req);
   const {
     modPlan, 
     name, 
@@ -142,7 +142,8 @@ accountRouter.put('/', (req, res) => {
     targetCap,
     faculty,
     secondMajors,
-    minors
+    minors,
+    majorIndex
   } = req.body;
   if (modPlan !== undefined) user.modPlan = modPlan;
   if (name !== undefined) user.name = name;
@@ -157,6 +158,7 @@ accountRouter.put('/', (req, res) => {
   if (faculty !== undefined) user.faculty = faculty;
   if (secondMajors !== undefined) user.secondMajors = secondMajors;
   if (minors !== undefined) user.minors = minors;
+  if (majorIndex !== undefined) user.majorIndex = majorIndex;
   user.save()
   .then(user => {
     res.status(200).json({
@@ -174,7 +176,8 @@ accountRouter.put('/', (req, res) => {
         targetCap: targetCap,
         faculty: faculty,
         secondMajors: secondMajors,
-        minors: minors
+        minors: minors,
+        majorIndex: majorIndex
       }
     });
   })

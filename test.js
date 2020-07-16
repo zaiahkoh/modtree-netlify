@@ -8,7 +8,7 @@ var options = {
   },
   form: {
     'name': 'Testy McTestFace',
-    'minors': [{'tag': 'minor_fake'}]
+    'minors': [{'tag': 'minor_management'}]
   }
 };
 request(options, function (error, response) {

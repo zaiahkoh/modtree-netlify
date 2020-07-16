@@ -55,6 +55,9 @@ const UserSchema = new Schema({
   minors: {
     type: Array,
     default: []
+  },
+  majorIndex: {
+    type: Number
   }
 });
 
