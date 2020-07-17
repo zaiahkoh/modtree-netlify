@@ -19,7 +19,6 @@ function toView(ruleObj) {
     out.evaluation = evaluation;
     var subList = ruleObj.params.list.map(toView);
     subList = subList.filter(item => item !== undefined);
-    console.log(subList);
     if (subList.length > 0) {
       out.sub = subList;
     }
