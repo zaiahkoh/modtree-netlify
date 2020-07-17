@@ -67,7 +67,7 @@ function filterMods (modules, ...queries) {
     if (params.allow !== undefined) {
       const allowed = params.allow;
       const exception = modules.filter(mod => allowed.includes(mod));
-      for(i = 0; i < exception.length; i++) {
+      for(let i = 0; i < exception.length; i++) {
         if ( !modList.includes(exception[i]) ) {
           modList.push(exception[i]);
         }
@@ -78,10 +78,10 @@ function filterMods (modules, ...queries) {
   }
 
   var output = [];
-  for (i = 0; i < queries.length; i++){
+  for (let i = 0; i < queries.length; i++){
     const aList = helper(modules, queries[i]);
 
-    for(j = 0; j < aList.length; j++) {
+    for(let j = 0; j < aList.length; j++) {
       if ( !output.includes(aList[j]) ) {
         output.push(aList[j]);
       }

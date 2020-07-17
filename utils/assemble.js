@@ -50,18 +50,26 @@ async function expandList(list) {
   }
 
   var output = [];
-  for(i = 0; i < list.length; i++) {
+  for(let i = 0; i < list.length; i++) {
+
     const item = list[i];
     if (typeof item == 'object' && item.tag && item.tag.startsWith('l_')) {
       var spread = await queryList(item);
       spread = spread.map(code => '?' + code);
       output.push(...spread);
     } else if (typeof item == 'string' && item.startsWith('r_')) {
-      output.push(await getRule(item));
+
+      const one = await getRule(item);
+      output.push(one);
     } else {
       output.push(item);
     }
+
+
+    
   }
+
+
 
   return output;
 }
@@ -88,7 +96,7 @@ async function getRule(ruleTag) {
       var nextRule;
       const list = obj.params.list;
       const tag = path.shift();
-      for (i = 0; i < list.length; i++) {
+      for (let i = 0; i < list.length; i++) {
         if (typeof list[i] == 'object' && list[0].tag == tag) {
           nextRule = list[i];
         }

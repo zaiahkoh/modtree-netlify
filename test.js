@@ -33,7 +33,7 @@ assemble('r_ba_degree')
 var request = require('request');
 var options = {
   'method': 'GET',
-  'url': 'http://modtree-api.netlify.app/.netlify/functions/rules/assemble/r_utcp',
+  'url': 'http://modtree-api.netlify.app/.netlify/functions/rules/assemble/r_ba_degree',
   'headers': {
     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMDEzYjBhMzlkMjIzMDAwNzFmYmM0YSIsIm5hbWUiOiJuZXdOYW1lIiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNTk0ODY4OTIyLCJleHAiOjE2MjY0MjU4NDh9.YbLYPqotgU6oaof0DJlu0w_M0DLpXPmr9Uo63T2KENI',
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -46,9 +46,18 @@ var options = {
 request(options, function (error, response) {
   if (error) throw new Error(error);
   const obj = JSON.parse(response.body);
+  /*
   compile(obj)
-  .then(func => func({modules: ['UTC1000', 'UTS2000', 'UTC2000', 'UTW1000', 'UTW2000']}))
+  .then(func => func({modules: ['CS1101S']}))
   .then(toView)
-  .then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
+  .then(obj => console.log(obj.sub[0]))
+  */
+  console.log(obj.params.list[0].params.list)
+  //.then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
   //console.log(asdf);
 });
+
+/*
+assemble('r_ba_degree')
+.then(obj => console.log(obj.params.list[0].params.list))
+*/
