@@ -23,7 +23,7 @@ function compile(ruleTag) {
     } else if (ruleObj.func === 'nModules') {
       return nModules(ruleObj);
     } else {
-      throw('func not recognised');
+      throw(`func not recognised: ${ruleObj.func} in ${ruleObj.tag}`);
     }
   } else {
     console.error('unrecognised ruleTag');
@@ -53,7 +53,7 @@ async function and(ruleObj) {
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
-    const bool = boolArray.every(obj => obj.evaluation);
+    const bool = boolArray.every(bool => bool);
     ruleObj.evaluation = bool;
     return ruleObj;
   }

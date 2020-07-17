@@ -21,6 +21,7 @@ request(options, function (error, response) {
 const assemble = require('./utils/assemble')
 const compile = require('./utils/compile');
 const toView = require('./utils/toView')
+const util = require('util')
 
 /*
 assemble('r_ba_degree')
@@ -31,8 +32,8 @@ assemble('r_ba_degree')
 
 var request = require('request');
 var options = {
-  'method': 'GEt',
-  'url': 'http://modtree-api.netlify.app/.netlify/functions/rules/assemble/r_ba_degree',
+  'method': 'GET',
+  'url': 'http://modtree-api.netlify.app/.netlify/functions/rules/assemble/r_utcp',
   'headers': {
     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMDEzYjBhMzlkMjIzMDAwNzFmYmM0YSIsIm5hbWUiOiJuZXdOYW1lIiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNTk0ODY4OTIyLCJleHAiOjE2MjY0MjU4NDh9.YbLYPqotgU6oaof0DJlu0w_M0DLpXPmr9Uo63T2KENI',
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -46,8 +47,8 @@ request(options, function (error, response) {
   if (error) throw new Error(error);
   const obj = JSON.parse(response.body);
   compile(obj)
-  .then(func => func({modules: ['CS1101S']}))
+  .then(func => func({modules: ['UTC1000', 'UTS2000', 'UTC2000', 'UTW1000', 'UTW2000']}))
   .then(toView)
-  .then(console.log);
+  .then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
   //console.log(asdf);
 });
