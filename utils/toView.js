@@ -5,17 +5,19 @@ function toView(ruleObj) {
   }
 
   if (['mcs', 'nModules', 'notEmpty'].includes(ruleObj.func)) {
-    const { name, desc, evaluation } = ruleObj;
+    const { name, desc, evaluation, func } = ruleObj;
     var out = {};
     out.name = name;
     out.desc = desc;
+    out.func = func;
     out.evaluation = evaluation;
     return out;
   } else if (['and', 'or', 'nTrue'].includes(ruleObj.func)) {
-    const { name, desc, evaluation } = ruleObj;
+    const { name, desc, evaluation, func } = ruleObj;
     var out = {};
     out.name = name;
     out.desc = desc;
+    out.func = func;
     out.evaluation = evaluation;
     var subList = ruleObj.params.list.map(toView);
     subList = subList.filter(item => item !== undefined);
@@ -24,10 +26,11 @@ function toView(ruleObj) {
     }
     return out;
   } else if (ruleObj.func == 'filter') {
-    const { name, desc, evaluation } = ruleObj;
+    const { name, desc, evaluation, func } = ruleObj;
     var out = {};
     out.name = name;
     out.desc = desc;
+    out.func = func;
     out.evaluation = evaluation;
     const nextSub = toView(ruleObj.params.next);
     if (nextSub !== undefined) {
