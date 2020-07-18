@@ -114,16 +114,17 @@ async function nTrue(ruleObj) {
     if (min !== undefined && n < min) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else if (max !== undefined && n > max) {
+    } 
+    if (max !== undefined && n > max) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else if (equal !== undefined && n !== equal) {
+    } 
+    if (equal !== undefined && n !== equal) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else {
-      ruleObj.evaluation = true;
-      return ruleObj;
-    }
+    } 
+    ruleObj.evaluation = true;
+    return ruleObj;
 
   }
 }
@@ -170,16 +171,17 @@ async function mcs(ruleObj) {
     if (min !== undefined && n < min) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else if (max !== undefined && n > max) {
+    } 
+    if (max !== undefined && n > max) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else if (equal !== undefined && n !== equal) {
+    } 
+    if (equal !== undefined && n !== equal) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else {
-      ruleObj.evaluation = true;
-      return ruleObj;
-    }
+    } 
+    ruleObj.evaluation = true;
+    return ruleObj;
 
   }
 }
@@ -224,16 +226,18 @@ async function nModules (ruleObj) {
     if (min !== undefined && n < min) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else if (max !== undefined && n > max) {
+    } 
+    if (max !== undefined && n > max) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else if (equal !== undefined && n !== equal) {
+    } 
+    if (equal !== undefined && n !== equal) {
       ruleObj.evaluation = false;
       return ruleObj;
-    } else {
-      ruleObj.evaluation = true;
-      return ruleObj;
-    }
+    } 
+    ruleObj.evaluation = true;
+    return ruleObj;
+
   }
 }
 
@@ -319,5 +323,16 @@ async function filter(ruleObj) {
     return ruleObj;
   }
 }
+
+const assemble = require('./assemble')
+const toView = require('./toView')
+const util = require('util')
+
+assemble('r_cs_degree')
+.then(compile)
+.then(func => func({modules: ['CS1101S']}))
+//.then(console.log)
+.then(toView)
+.then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
 
 module.exports = compile;
