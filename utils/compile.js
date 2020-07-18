@@ -253,7 +253,7 @@ async function notEmpty (ruleObj) {
         filteredModules = filterMods(filteredModules, params.filter);
       }
     }
-    const bool = (filtered.length !== 0);
+    const bool = (filteredModules.length !== 0);
     ruleObj.evaluation = bool;
     return ruleObj;
   };
@@ -328,11 +328,11 @@ const assemble = require('./assemble')
 const toView = require('./toView')
 const util = require('util')
 
-assemble('r_cs_degree')
+assemble('r_entrepreneurship_minor')
 .then(compile)
 .then(func => func({modules: ['CS1101S']}))
 //.then(console.log)
-.then(toView)
+//.then(toView)
 .then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
 
 module.exports = compile;
