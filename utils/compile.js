@@ -37,7 +37,7 @@ function planned(ruleObj) {
   const mod = params.moduleCode;
   const noSuffix = parseMod(mod).no_suffix;
   return (modPlan) => {
-    const noSuffixList = modPlan.modules.map(str => parseMod(str).no_suffix);
+    const noSuffixList = modPlan.modules.map(code => parseMod(code).no_suffix);
     const bool = noSuffixList.includes(noSuffix);
     ruleObj.evaluation = bool;
     return ruleObj;
@@ -48,8 +48,8 @@ function planned(ruleObj) {
 async function and(ruleObj) {
   var params = ruleObj.params;
   assert(params['list'] !== undefined, '"and" list not provided');
-  const expandedList = params.list;
-  var funcArray = await Promise.all(expandedList.map(compile));
+  const list = params.list;
+  var funcArray = await Promise.all(list.map(compile));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
@@ -63,8 +63,8 @@ async function and(ruleObj) {
 async function or(ruleObj) {
   var params = ruleObj.params
   assert(params['list'] !== undefined);
-  const expandedList = params.list;
-  var funcArray = await Promise.all(expandedList.map(compile));
+  const list = params.list;
+  var funcArray = await Promise.all(list.map(compile));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
@@ -78,35 +78,82 @@ async function or(ruleObj) {
 //equal to max of the sub functions return true
 async function nTrue(ruleObj) {
   var params = ruleObj.params;
+
+  // Assert that at least one criteria is specified
   assert(params['list'] !== undefined);
-  assert(params['n'] !== undefined || params['max'] !== undefined);
-  const n = typeof params.n == 'string'
-    ? parseInt(params.n)
-    : params.n
+  assert(
+    params['min'] !== undefined || 
+    params['max'] !== undefined || 
+    params['equal'] !== undefined);
+
+  // Parse and set the constraints
+  var min, max, equal;
+  if (params.min) {
+    min = typeof params.min == 'string'
+    ? parseInt(params.min)
+    : params.min
+  }
   if (params.max) {
-    const max = typeof params.max == 'string'
+    max = typeof params.max == 'string'
     ? parseInt(params.max)
     : params.max
   }
-  const expandedList = await params.list
-  var funcArray = await Promise.all(expandedList.map(compile));
+  if (params.equal) {
+    equal = typeof params.equal == 'string'
+    ? parseInt(params.equal)
+    : params.equal
+  }
+
+  const list = params.list
+  var funcArray = await Promise.all(list.map(compile));
   return async (modPlan) => {
     var objArray = await Promise.all(funcArray.map(func => func(modPlan)));
     const boolArray = objArray.map(obj => obj.evaluation);
-    const numOfMods = boolArray.reduce((a, b) => a + b, 0)
-    const bool = numOfMods >= n;
-    ruleObj.evaluation = bool;
-    return ruleObj;
+    const n = boolArray.reduce((a, b) => a + b, 0);
+
+    if (min !== undefined && n < min) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else if (max !== undefined && n > max) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else if (equal !== undefined && n !== equal) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else {
+      ruleObj.evaluation = true;
+      return ruleObj;
+    }
+
   }
 }
 
 //Returns true if the mods listed meet the number of MCs stated
 async function mcs(ruleObj) {
   var params = ruleObj.params;
-  assert(params['n'] !== undefined);
-  const mcLimit = typeof params.n === 'number'
-    ? params.n
-    : parseInt(params.n);
+
+  assert(
+    params['min'] !== undefined || 
+    params['max'] !== undefined || 
+    params['equal'] !== undefined);
+  // Parse and set the constraints
+  var min, max, equal;
+  if (params.min) {
+    min = typeof params.min == 'string'
+    ? parseInt(params.min)
+    : params.min
+  }
+  if (params.max) {
+    max = typeof params.max == 'string'
+    ? parseInt(params.max)
+    : params.max
+  }
+  if (params.equal) {
+    equal = typeof params.equal == 'string'
+    ? parseInt(params.equal)
+    : params.equal
+  }
+
   return async (modPlan) => {
     var modList = modPlan.modules;
     if (params.filter !== undefined) {
@@ -118,17 +165,50 @@ async function mcs(ruleObj) {
     }
     const promiseArr = modList.map(code => getMod(2018, code));
     const creditArr = await Promise.all(promiseArr);
-    const total = creditArr.map(item => parseInt(item.moduleCredit)).reduce((a, b) => a + b, 0);
-    const bool = total >= mcLimit;
-    ruleObj.evaluation = bool;
-    return ruleObj;
+    const n = creditArr.map(item => parseInt(item.moduleCredit)).reduce((a, b) => a + b, 0);
+
+    if (min !== undefined && n < min) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else if (max !== undefined && n > max) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else if (equal !== undefined && n !== equal) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else {
+      ruleObj.evaluation = true;
+      return ruleObj;
+    }
+
   }
 }
 
 //Checks if the modPlan contains at least n number of modules
 async function nModules (ruleObj) {
   var params = ruleObj.params;
-  assert(params['n'] !== undefined);
+
+  assert(
+    params['min'] !== undefined || 
+    params['max'] !== undefined || 
+    params['equal'] !== undefined, "in " + ruleObj);
+  // Parse and set the constraints
+  var min, max, equal;
+  if (params.min) {
+    min = typeof params.min == 'string'
+    ? parseInt(params.min)
+    : params.min
+  }
+  if (params.max) {
+    max = typeof params.max == 'string'
+    ? parseInt(params.max)
+    : params.max
+  }
+  if (params.equal) {
+    equal = typeof params.equal == 'string'
+    ? parseInt(params.equal)
+    : params.equal
+  }
 
   return (modPlan) => {
     var filteredModules = modPlan.modules;
@@ -139,9 +219,21 @@ async function nModules (ruleObj) {
         filteredModules = filterMods(filteredModules, params.filter);
       }
     }
-    const bool = filteredModules.length >= params.n;
-    ruleObj.evaluation = bool;
-    return ruleObj;
+    const n = filteredModules.length;
+
+    if (min !== undefined && n < min) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else if (max !== undefined && n > max) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else if (equal !== undefined && n !== equal) {
+      ruleObj.evaluation = false;
+      return ruleObj;
+    } else {
+      ruleObj.evaluation = true;
+      return ruleObj;
+    }
   }
 }
 
@@ -149,7 +241,15 @@ async function nModules (ruleObj) {
 async function notEmpty (ruleObj) {
   var params = ruleObj.params;
   return (modPlan) => {
-    const bool = (modPlan.modules.length !== 0);
+    var filteredModules = modPlan.modules;
+    if (params.filter !== undefined) {
+      if (Array.isArray(params.filter)) {
+        filteredModules = filterMods(filteredModules, ...params.filter);
+      } else if (typeof params.filter == 'object') {
+        filteredModules = filterMods(filteredModules, params.filter);
+      }
+    }
+    const bool = (filtered.length !== 0);
     ruleObj.evaluation = bool;
     return ruleObj;
   };
