@@ -253,7 +253,7 @@ async function notEmpty (ruleObj) {
         filteredModules = filterMods(filteredModules, params.filter);
       }
     }
-    const bool = (filtered.length !== 0);
+    const bool = (filteredModules.length !== 0);
     ruleObj.evaluation = bool;
     return ruleObj;
   };

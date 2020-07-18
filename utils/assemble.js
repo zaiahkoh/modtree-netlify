@@ -1,6 +1,7 @@
 const parseMod = require('./parseMod');
 const getCollection = require('./mongo');
 const assert = require('assert')
+const filterMods = require('./filterMods');
 
 //Takes in a list parameter and returns the expanded form where all list
 //references have been resolved
@@ -11,42 +12,8 @@ async function expandList(list) {
     const col = await getCollection('lists');
     const listObj = await col.findOne({tag: queryObject.tag});
     assert(listObj, `unrecognised list tag: ${queryObject.tag}`)
-    var filterList = listObj.list;
 
-    function checkFor (moduleCode, attribute, acceptedVals) {
-      key = parseMod(moduleCode)[attribute];
-      assert(key !== undefined);
-      return acceptedVals.includes(key);
-    }
-
-    //Filter out according to the parameters
-    const {prefix, suffix, level, not} = queryObject;
-    if (prefix) {
-      const allowed = typeof prefix === 'string'
-        ? [prefix]
-        : prefix;
-      filterList = filterList.filter(moduleCode => 
-        checkFor(moduleCode, 'prefix', allowed)
-      );
-    }
-    if (suffix) {
-      const allowed = typeof suffix === 'string'
-        ? [suffix]
-        : suffix;
-      filterList = filterList.filter(moduleCode => 
-        checkFor(moduleCode, 'suffix', allowed)
-      );
-    }
-    if (level) {
-      const allowed = (typeof level === 'object'
-        ? level
-        : [level]).map(item => item.toString());
-      filterList = filterList.filter(moduleCode => 
-        checkFor(moduleCode, 'level', allowed)
-      );
-    }
-
-    return filterList;
+    return filterMods(listObj.list, queryObject);
   }
 
   var output = [];
