@@ -1,7 +1,24 @@
-const parseMod = require('./parseMod');
 const getCollection = require('./mongo');
 const assert = require('assert')
 const filterMods = require('./filterMods');
+
+async function expandCodeList(array) {
+  const col = await getCollection('lists');
+  var output = [];
+  for (let i = 0; i < array.length; i++) {
+    const item = array[i];
+    if (typeof item == 'object' && item.tag && item.tag.startsWith('l_')) {
+      const listObj = await col.findOne({tag: item.tag});
+      assert(listObj, `unrecognised list tag: ${item.tag}`)
+      const modList = listObj.list;
+      output.push(...modList);
+    } else {
+      output.push(item);
+    }
+  }
+  
+  return output;
+}
 
 //Takes in a list parameter and returns the expanded form where all list
 //references have been resolved
@@ -18,7 +35,6 @@ async function expandList(list) {
 
   var output = [];
   for(let i = 0; i < list.length; i++) {
-
     const item = list[i];
     if (typeof item == 'object' && item.tag && item.tag.startsWith('l_')) {
       var spread = await queryList(item);
@@ -30,14 +46,8 @@ async function expandList(list) {
       output.push(one);
     } else {
       output.push(item);
-    }
-
-
-    
+    }    
   }
-
-
-
   return output;
 }
 
@@ -81,6 +91,7 @@ async function assemble(ruleTag) {
   if (typeof ruleTag == 'string' && ruleTag.startsWith('r_')) {
     ruleObj = await getRule(ruleTag);
     if (ruleObj == undefined) {
+      console.log('unrecognised tag: ' + ruleTag);
       return undefined;
     }
   } else if (typeof ruleTag == 'object'){
@@ -92,9 +103,25 @@ async function assemble(ruleTag) {
         moduleCode: ruleTag.substr(1)
       }
     }
+  } else {
+    console.log('error parsing: ' + ruleTag);
+    return undefined;
   }
   
   if (['mcs', 'nModules', 'notEmpty'].includes(ruleObj.func)) {
+    if (Array.isArray(ruleObj.params.filter)) {
+      for(let i = 0; i < ruleObj.params.filter.length; i++) {
+        const filterParam = ruleObj.params.filter[i]
+        if (filterParam !== undefined && filterParam.code !== undefined) {
+          ruleObj.params.filter[i].code = await expandCodeList(filterParam.code);
+        }
+      }
+    } else {
+      const filterParam = ruleObj.params.filter
+      if (filterParam !== undefined && filterParam.code !== undefined) {
+        ruleObj.params.filter.code = await expandCodeList(filterParam.code);
+      }
+    }
     return ruleObj;
   } else if (['and', 'or', 'nTrue'].includes(ruleObj.func)) {
     var subList = await expandList(ruleObj.params.list);

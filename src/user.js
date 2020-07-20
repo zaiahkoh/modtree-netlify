@@ -120,6 +120,66 @@ router.post("/login", (req, res) => {
   });
 });
 
+async function validateWithProvider (network, socialToken) {
+  return new Promise((resolve, reject) => {
+    const url = providers[network].url;
+    const queryString = providers[network].qs + socialToken;
+    https.get(url + queryString, (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      })
+      res.on('end', () => {
+        resolve(JSON.parse(data));
+      })
+    }).on('error', (err) => {
+      reject(err);
+    })
+  })
+}
+
+router.post('/sociallogin', (req, res) => {
+  var network = req.body.network;
+  var token = req.body.token;
+  validateWithProvider(network, token).then(profile => {
+    if (profile.error) {
+      res.status(400).json(profile.error);
+    } else {
+      User.findOne({email: profile.email, socialLogin: network}).then(user => {
+        if (user) {
+          createJWT(user, (err, token) => {
+            res.json({
+              success: true,
+              token: "Bearer " + token
+            })
+          });
+        } else {
+          //Create a new account for the social sign in user
+          const newUser = new User({
+            name: profile.name,
+            email: profile.email,
+            socialLogin: network
+          });
+          //Save new User in database
+          newUser.save()
+            .then(user => {
+              createJWT(user, (err, token) => {
+                res.json({
+                  success: true,
+                  token: "Bearer " + token
+                })
+              });
+            })
+            .catch(err => {
+              console.log(err);
+              res.status(409).json({newaccountissue: 'Failed to create new account'});
+            });
+        }
+      })
+    }
+  })
+});
+
 accountRouter.get('/', (req, res) => {
   var user = req.user;
   user.password = undefined;
