@@ -324,15 +324,4 @@ async function filter(ruleObj) {
   }
 }
 
-const assemble = require('./assemble')
-const toView = require('./toView')
-const util = require('util')
-
-assemble('r_entrepreneurship_minor')
-.then(compile)
-.then(func => func({modules: ['CS1101S']}))
-//.then(console.log)
-//.then(toView)
-.then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
-
 module.exports = compile;

@@ -1,5 +1,11 @@
-/*
 var request = require('request');
+const assemble = require('./utils/assemble')
+const compile = require('./utils/compile');
+const toView = require('./utils/toView')
+const util = require('util')
+const filterMods = require('./utils/filterMods')
+
+/*
 var options = {
   'method': 'PUT',
   'url': 'http://modtree-api.netlify.app/.netlify/functions/user/account',
@@ -18,10 +24,7 @@ request(options, function (error, response) {
 });
 */
 
-const assemble = require('./utils/assemble')
-const compile = require('./utils/compile');
-const toView = require('./utils/toView')
-const util = require('util')
+
 
 /*
 assemble('r_ba_degree')
@@ -30,6 +33,7 @@ assemble('r_ba_degree')
 .then(console.log)
 */
 
+/*
 var request = require('request');
 var options = {
   'method': 'GET',
@@ -43,21 +47,24 @@ var options = {
     'minors': [{'tag': 'minor_management'}]
   }
 };
+
 request(options, function (error, response) {
   if (error) throw new Error(error);
   const obj = JSON.parse(response.body);
-  /*
   compile(obj)
   .then(func => func({modules: ['CS1101S']}))
   .then(toView)
   .then(obj => console.log(obj.sub[0]))
-  */
   console.log(obj.params.list[0].params.list)
   //.then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
   //console.log(asdf);
 });
-
-/*
-assemble('r_ba_degree')
-.then(obj => console.log(obj.params.list[0].params.list))
 */
+
+
+assemble('r_ceg_degree')
+.then(compile)
+.then(func => func({modules: ['CS4236', 'CS4238', 'DBA4811', 'FSP4003']}))
+//.then(toView)
+.then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
+

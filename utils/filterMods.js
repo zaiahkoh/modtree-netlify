@@ -58,6 +58,12 @@ function filterMods (modules, ...queries) {
         : [params.notType]).map(item => item.toString());
       modList = modList.filter(mod => !checkFor(mod, 'type', allowed));
     }
+
+    if (params.code !== undefined) {
+      var allowed = params.code;
+      allowed = allowed.map(item => parseMod(item).no_suffix)
+      modList = modList.filter(mod => allowed.includes(parseMod(mod).no_suffix));
+    }
   
     if (params.block !== undefined) {
       const blocked = params.block;
