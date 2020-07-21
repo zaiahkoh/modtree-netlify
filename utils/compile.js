@@ -324,8 +324,4 @@ async function filter(ruleObj) {
   }
 }
 
-<<<<<<< HEAD
 module.exports = compile;
-=======
-module.exports = compile;
->>>>>>> minmax

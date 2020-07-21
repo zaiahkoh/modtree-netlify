@@ -33,11 +33,11 @@ assemble('r_ba_degree')
 .then(console.log)
 */
 
-/*
+
 var request = require('request');
 var options = {
   'method': 'GET',
-  'url': 'http://modtree-api.netlify.app/.netlify/functions/rules/assemble/r_ba_degree',
+  'url': 'http://modtree-api.netlify.app/.netlify/functions/rules/assemble/r_acc_degree',
   'headers': {
     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmMDEzYjBhMzlkMjIzMDAwNzFmYmM0YSIsIm5hbWUiOiJuZXdOYW1lIiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNTk0ODY4OTIyLCJleHAiOjE2MjY0MjU4NDh9.YbLYPqotgU6oaof0DJlu0w_M0DLpXPmr9Uo63T2KENI',
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -54,17 +54,17 @@ request(options, function (error, response) {
   compile(obj)
   .then(func => func({modules: ['CS1101S']}))
   .then(toView)
-  .then(obj => console.log(obj.sub[0]))
-  console.log(obj.params.list[0].params.list)
-  //.then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
+  //.then(obj => console.log(obj.sub[0]))
+  //console.log(obj.params.list[0].params.list)
+  .then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
   //console.log(asdf);
 });
-*/
 
 
+/*
 assemble('r_ceg_degree')
 .then(compile)
 .then(func => func({modules: ['CS4236', 'CS4238', 'DBA4811', 'FSP4003']}))
 //.then(toView)
 .then(myObject => console.log(util.inspect(myObject, {showHidden: false, depth: null})));
-
+*/
